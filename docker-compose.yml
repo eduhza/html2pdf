@@ -1,0 +1,19 @@
+name: PocUi
+services:
+  pocui:
+    image: ${DOCKER_REGISTRY-}pocui
+    container_name: Poc-html2pdf.Ui
+    build:
+      context: PocUi
+      dockerfile: Dockerfile
+    ports:
+      - "5001:8081"  # Map host port 5001 to container port 8081
+    environment:
+      - Gotenberg__BaseUrl=http://gotenberg:3000
+    depends_on:
+      - gotenberg
+
+  gotenberg:
+    image: gotenberg/gotenberg:8
+    ports:
+      - "3000:3000"
