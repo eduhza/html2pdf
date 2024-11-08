@@ -12,22 +12,43 @@ public class PdfBenchmarks
 {
     public readonly string _htmlContent;
     //private readonly HttpClient _httpClient;
+    //private readonly DinkToPdfUseCase _dinkToPdf;
     //private readonly GotenbergUseCase _gotenberg;
     private readonly IronPdfUseCase _ironPdf;
+    //private readonly NRecoUseCase _nReco;
+    //private readonly PugPdfUseCase _pugPdf;
+    //private readonly PuppeteerUseCase _puppeteer;
 
     public PdfBenchmarks()
     {
         _htmlContent = GetHtml.htmlContent;
         //_httpClient = new HttpClient() { BaseAddress = new Uri("http://localhost:3000") };
-        _ironPdf = new IronPdfUseCase(new IronPdfConverter());
+        //_dinkToPdf = new DinkToPdfUseCase(new DinkToPdfConverter(new SynchronizedConverter(new PdfTools())));
         //_gotenberg = new GotenbergUseCase(new GoternbergConverter(_httpClient));
+        _ironPdf = new IronPdfUseCase(new IronPdfConverter());
+        //_nReco = new NRecoUseCase(new NRecoConverter());
+        //_pugPdf = new PugPdfUseCase(new PugPdfConverter());
+        //_puppeteer = new PuppeteerUseCase(new PuppeteerConverter());
     }
+
+    //[Benchmark]
+    //public async Task BenchmarkDinkToPdf() => await _dinkToPdf.ExecuteAsync(_htmlContent);
+
+    //[Benchmark]
+    //public async Task BenchmarkGotenberg() => await _gotenberg.ExecuteAsync(_htmlContent);
 
     [Benchmark]
     public async Task BenchmarkIronPdf() => await _ironPdf.ExecuteAsync(_htmlContent);
 
     //[Benchmark]
-    //public async Task BenchmarkGotenberg() => await _gotenberg.ExecuteAsync(_htmlContent);
+    //public async Task BenchmarkNReco() => await _nReco.ExecuteAsync(_htmlContent);
+
+    //[Benchmark]
+    //public async Task BenchmarkPugPdf() => await _pugPdf.ExecuteAsync(_htmlContent);
+
+    //[Benchmark]
+    //public async Task BenchmarkPuppeteer() => await _puppeteer.ExecuteAsync(_htmlContent);
+
 
     public class Program
     {

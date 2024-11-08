@@ -1,13 +1,12 @@
-﻿using PocUi.Services;
+﻿namespace PocUi.IronPdf;
 
-namespace PocUi.IronPdf;
-
-public class IronPdfUseCase(IHtmlToPdfService converter)
+public class IronPdfUseCase(IIronPdfConverter converter)
 {
-    private readonly IHtmlToPdfService _converter = converter;
+    private readonly IIronPdfConverter _converter = converter;
 
     public async Task<byte[]> ExecuteAsync(string htmlContent)
     {
+        Console.WriteLine("IronPdfUseCase");
         return await _converter.GerarPdf(htmlContent);
     }
 }

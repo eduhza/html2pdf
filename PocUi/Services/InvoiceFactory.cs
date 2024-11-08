@@ -1,14 +1,17 @@
 ﻿using Bogus;
 using PocUi.Models;
+using Razor.Templating.Core;
 
-namespace PocUi;
+namespace PocUi.Services;
 
 internal sealed class InvoiceFactory
 {
-    public readonly Invoice invoice;
-    public InvoiceFactory()
+    private readonly Invoice _invoice;
+    public readonly string Html;
+    public InvoiceFactory(IRazorTemplateEngine _razorTemplateEngine)
     {
-        invoice = this.Create();
+        _invoice = Create();
+        Html = _razorTemplateEngine.RenderAsync("Views/PaginaModelo.cshtml", _invoice).Result;
     }
 
     public Invoice Create()

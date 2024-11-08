@@ -1,13 +1,12 @@
-﻿using PocUi.Services;
+﻿namespace PocUi.Gotenberg;
 
-namespace PocUi.Gotenberg;
-
-public class GotenbergUseCase(IHtmlToPdfService converter)
+public class GotenbergUseCase(IGoternbergConverter converter)
 {
-    private readonly IHtmlToPdfService _converter = converter;
+    private readonly IGoternbergConverter _converter = converter;
 
     public async Task<byte[]> ExecuteAsync(string htmlContent)
     {
+        Console.WriteLine("GotenbergUseCase");
         return await _converter.GerarPdf(htmlContent);
     }
 }

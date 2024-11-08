@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using PugPdf.Core;
-using Razor.Templating.Core;
+using PocUi.Services;
 
 namespace PocUi.PugPdfLib;
 
@@ -24,27 +23,14 @@ public static class PugPdfEndpoint
     {
         endpoints.MapGet("/pugpdf",
             async (
-                [FromServices] IRazorTemplateEngine _razorTemplateEngine,
-                [FromServices] InvoiceFactory invoiceFactory) =>
-                {
-                    Console.WriteLine("Gerando PDF com PugPDF...");
-                    var renderer = new PugPdf.Core.HtmlToPdf();
-                    renderer.PrintOptions.Title = "PDF gerado com PugPDF";
-                    renderer.PrintOptions.Header = new PdfHeader()
-                    {
-                        CenterText = "Texto central",
-                        DisplayLine = true
-                    };
+                [FromServices] InvoiceFactory invoiceFactory,
+                [FromServices] PugPdfUseCase useCase) =>
+            {
+                Console.WriteLine("PugPdfEndpoint");
+                var pdfBytes = await useCase.ExecuteAsync(invoiceFactory.Html);
+                return Results.File(pdfBytes, "application/pdf", "PugPdf.pdf");
 
-                    var html = await _razorTemplateEngine.RenderAsync("Views/PaginaModelo.cshtml", invoiceFactory.invoice);
-                    var pdf = await renderer.RenderHtmlAsPdfAsync(html);
-
-                    var path = Path.Combine(Path.GetTempPath(), "pugpdf.pdf");
-                    pdf.SaveAs(path);
-                    Console.WriteLine($"Arquivo gerado: {path}");
-
-                    return Task.CompletedTask;
-                })
+            })
             .WithName("PrintWithPugPDF")
             .WithOpenApi();
 

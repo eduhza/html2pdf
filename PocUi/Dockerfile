@@ -13,6 +13,17 @@ USER root
 RUN apt update \
     && apt install -y sudo libxkbcommon-x11-0 libc6 libc6-dev libgtk2.0-0 libnss3 libatk-bridge2.0-0 libx11-xcb1 libxcb-dri3-0 libdrm-common libgbm1 libasound2 libxrender1 libfontconfig1 libxshmfence1 libgdiplus libva-dev
 
+#NReco.PdfGenerator.LT
+RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates fontconfig libc6 libfreetype6 libjpeg62-turbo libpng16-16 libssl3 libstdc++6 libx11-6 libxcb1 libxext6 libxrender1 xfonts-75dpi xfonts-base zlib1g
+RUN wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
+RUN dpkg -i wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
+
+#NReco.PdfGenerator.LT Windows Fonts
+RUN echo "deb http://deb.debian.org/debian bookworm contrib non-free" > /etc/apt/sources.list.d/contrib.list
+RUN echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+RUN apt-get update -y && apt-get install -y --no-install-recommends ttf-mscorefonts-installer
+RUN fc-cache -f -v
+
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release

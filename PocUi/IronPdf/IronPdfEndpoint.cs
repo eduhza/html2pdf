@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Razor.Templating.Core;
+using PocUi.Services;
 
 namespace PocUi.IronPdf;
 
@@ -9,22 +9,12 @@ public static class IronPdfEndpoint
     {
         endpoints.MapPost("/ironpdf",
             async (
-                [FromServices] IRazorTemplateEngine _razorTemplateEngine,
                 [FromServices] InvoiceFactory invoiceFactory,
                 [FromServices] IronPdfUseCase useCase) =>
                 {
-                    var html = await _razorTemplateEngine.RenderAsync("Views/PaginaModelo.cshtml", invoiceFactory.invoice);
-                    var path = Path.Combine(Path.GetTempPath(), "IronPdf.pdf");
-
-                    var pdfBytes = await useCase.ExecuteAsync(html);
-                    //await File.WriteAllBytesAsync(path, pdfBytes);
-                    var base64Pdf = Convert.ToBase64String(pdfBytes);
-                    return Results.Ok(base64Pdf);
-
-                    //return Results.File(
-                    //    pdfBytes,
-                    //    "application/pdf",
-                    //    $"invoice-{invoiceFactory.invoice.Number}.pdf");
+                    Console.WriteLine("IronPdfEndpoint");
+                    var pdfBytes = await useCase.ExecuteAsync(invoiceFactory.Html);
+                    return Results.File(pdfBytes, "application/pdf", "IronPdf.pdf");
                 })
             .WithName("ironpdf")
             .WithOpenApi();

@@ -1,14 +1,14 @@
-﻿using PocUi.Services;
-using PuppeteerSharp;
+﻿using PuppeteerSharp;
 
 namespace PocUi.PuppeteerLib;
 
-public class PuppeteerConverter : IHtmlToPdfService
+public class PuppeteerConverter : IPuppeteerConverter
 {
     public async Task<byte[]> GerarPdf(string htmlContent)
     {
         try
         {
+            Console.WriteLine("GERANDO PDF PuppeteerConverter");
             await new BrowserFetcher().DownloadAsync();
 
             await using var browser = await Puppeteer.LaunchAsync(

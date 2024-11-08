@@ -1,13 +1,13 @@
-﻿using PocUi.Services;
+﻿namespace PocUi.IronPdf;
 
-namespace PocUi.IronPdf;
-
-public class IronPdfConverter() : IHtmlToPdfService
+public class IronPdfConverter() : IIronPdfConverter
 {
     private readonly ChromePdfRenderer _renderer = new();
-    public Task<byte[]> GerarPdf(string htmlContent)
+    public async Task<byte[]> GerarPdf(string htmlContent)
     {
-        var pdfDocument = _renderer.RenderHtmlAsPdf(htmlContent);
-        return Task.FromResult(pdfDocument.BinaryData);
+        Console.WriteLine("GERANDO PDF IronPdfConverter");
+        var pdfDocument = await _renderer.RenderHtmlAsPdfAsync(htmlContent);
+
+        return pdfDocument.BinaryData;
     }
 }

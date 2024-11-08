@@ -1,5 +1,5 @@
-﻿using PocUi.Services;
-using Razor.Templating.Core;
+﻿using Microsoft.AspNetCore.Mvc;
+using PocUi.Services;
 
 namespace PocUi.DinkToPdf;
 
@@ -18,21 +18,13 @@ public static class DinkToPdfEndpoint
     {
         endpoints.MapGet("/DinkToPdf",
             async (
-                IRazorTemplateEngine _razorTemplateEngine,
-                InvoiceFactory invoiceFactory,
-                IHtmlToPdfService pdfService) =>
-                {
-                    //Invoice invoice = invoiceFactory.Create();
-                    Console.WriteLine("Gerando PaginaModelo (razor) em html...");
-                    var html = await _razorTemplateEngine.RenderAsync("Views/PaginaModelo.cshtml", invoiceFactory.invoice);
-
-                    var path = Path.Combine(Path.GetTempPath(), "DinkToPdf.pdf");
-                    var pdfBytes = await pdfService.GerarPdf(html);
-                    await File.WriteAllBytesAsync(path, pdfBytes);
-
-                    Console.WriteLine(path);
-                    return Results.Ok(path);
-                })
+                [FromServices] InvoiceFactory invoiceFactory,
+                [FromServices] DinkToPdfUseCase useCase) =>
+            {
+                Console.WriteLine("DinkToPdfEndpoint");
+                var pdfBytes = await useCase.ExecuteAsync(invoiceFactory.Html);
+                return Results.File(pdfBytes, "application/pdf", "DinkToPdf.pdf");
+            })
             .WithName("DinkToPdf")
             .WithOpenApi();
 

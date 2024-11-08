@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Razor.Templating.Core;
+using PocUi.Services;
 
 namespace PocUi.Gotenberg;
 
@@ -9,20 +9,12 @@ public static class GotenbergEndpoint
     {
         endpoints.MapGet("/Gotenberg",
             async (
-                [FromServices] IRazorTemplateEngine _razorTemplateEngine,
                 [FromServices] InvoiceFactory invoiceFactory,
                 [FromServices] GotenbergUseCase useCase) =>
                 {
-                    //Invoice invoice = invoiceFactory.Create();
-                    var html = await _razorTemplateEngine.RenderAsync("Views/PaginaModelo.cshtml", invoiceFactory.invoice);
-
-                    var path = Path.Combine(Path.GetTempPath(), "Gotenberg.pdf");
-
-                    var pdfBytes = await useCase.ExecuteAsync(html);
-                    //await File.WriteAllBytesAsync(path, pdfBytes);
-                    var base64Pdf = Convert.ToBase64String(pdfBytes);
-
-                    return Results.Ok(base64Pdf);
+                    Console.WriteLine("GotenbergEndpoint");
+                    var pdfBytes = await useCase.ExecuteAsync(invoiceFactory.Html);
+                    return Results.File(pdfBytes, "application/pdf", "Gotenberg.pdf");
                 })
             .WithName("Gotenberg")
             .WithOpenApi();

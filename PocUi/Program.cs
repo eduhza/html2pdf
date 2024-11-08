@@ -1,14 +1,12 @@
-using DinkToPdf;
-using DinkToPdf.Contracts;
-using PocUi;
 using PocUi.DinkToPdf;
+using PocUi.Extensions;
 using PocUi.Gotenberg;
 using PocUi.IronPdf;
+using PocUi.NRecoLib;
 using PocUi.PugPdfLib;
-using PocUi.Services;
+using PocUi.PuppeteerLib;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,25 +22,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-//RazorTemplating
-builder.Services.AddScoped<InvoiceFactory>();
-builder.Services.AddRazorTemplating();
-
-//DinkToPdf
-builder.Services.AddSingleton<IConverter, SynchronizedConverter>(provider =>
-    new SynchronizedConverter(new PdfTools()));
-builder.Services.AddTransient<IHtmlToPdfService, PdfService>();
-
-//IronPdf
-License.LicenseKey = builder.Configuration["IronPdf:LicenseKey"];
-builder.Services.AddScoped<IronPdfUseCase>();
-builder.Services.AddSingleton<IHtmlToPdfService, IronPdfConverter>();
-
-//Gotenberg -> A Container API for converting HTML, Markdown, MS Office, and more to PDF
-var gotenbergBaseUrl = builder.Configuration.GetSection("Gotenberg")["BaseUrl"];
-builder.Services.AddScoped<GotenbergUseCase>();
-builder.Services.AddHttpClient<IHtmlToPdfService, GoternbergConverter>(client =>
-    client.BaseAddress = new Uri(gotenbergBaseUrl));
+builder.Services.AddInvoiceFactory();
+builder.Services.AddDinkToPdf();
+builder.Services.AddPugPdf();
+builder.Services.AddPuppeteer();
+builder.Services.AddGotenberg(builder.Configuration);
+builder.Services.AddIronPdf(builder.Configuration);
+builder.Services.AddNReco();
 
 var app = builder.Build();
 
@@ -54,10 +40,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPugPdf();
 app.MapDinkToPdf();
+app.MapPugPdf();
+app.MapPuppeteer();
 app.MapGotenberg();
 app.MapIronPdf();
+app.MapNReco();
 
 
 

@@ -1,22 +1,20 @@
 ﻿using DinkToPdf;
 using DinkToPdf.Contracts;
-using PocUi.Services;
 
 namespace PocUi.DinkToPdf;
 
-public class PdfService(IConverter converter) : IHtmlToPdfService
+public class DinkToPdfConverter(IConverter converter) : IIDinkToPdfConverter
 {
     private readonly IConverter _converter = converter;
     public Task<byte[]> GerarPdf(string htmlContent)
     {
-        var outputPath = Path.Combine(Path.GetTempPath(), "DinkToPdf.pdf");
         var pdfDocument = new HtmlToPdfDocument
         {
             GlobalSettings = new GlobalSettings
             {
+                ColorMode = ColorMode.Color,
                 PaperSize = PaperKind.A4,
-                Orientation = Orientation.Portrait,
-                Out = outputPath
+                Orientation = Orientation.Portrait
             },
             Objects =
             {
@@ -28,6 +26,7 @@ public class PdfService(IConverter converter) : IHtmlToPdfService
             }
         };
 
-        return Task.FromResult(_converter.Convert(pdfDocument));
+        byte[] pdfBytes = _converter.Convert(pdfDocument);
+        return Task.FromResult(pdfBytes);
     }
 }
