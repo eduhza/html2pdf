@@ -1,10 +1,10 @@
-name: PocUi
+name: PocAPI
 services:
-  pocui:
-    image: ${DOCKER_REGISTRY-}pocui
-    container_name: Poc-html2pdf.Ui
+  pocapi:
+    image: ${DOCKER_REGISTRY-}pocapi
+    container_name: Poc-html2pdf.API
     build:
-      context: PocUi
+      context: PocApi
       dockerfile: Dockerfile
     ports:
       - "5001:8081"  # Map host port 5001 to container port 8081
@@ -14,6 +14,6 @@ services:
       - gotenberg
 
   gotenberg:
-    image: gotenberg/gotenberg:8
+    image: gotenberg/gotenberg:8 # If no port is passed, it will be available in gotenberg:3000
     ports:
-      - "3000:3000"
+      - "3000:3000" # Api available on port http://localhost:3000

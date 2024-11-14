@@ -7,7 +7,7 @@
     <ProjectGuid>9c28cd85-654c-4ad4-84e1-dfd8f7b00b00</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>pocui</DockerServiceName>
+    <DockerServiceName>pocapi</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.override.yml">

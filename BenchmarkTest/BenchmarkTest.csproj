@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PocUi\PocUi.csproj" />
+    <ProjectReference Include="..\PocAPI\PocAPI.csproj" />
   </ItemGroup>
 
 </Project>
