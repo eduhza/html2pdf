@@ -21,11 +21,10 @@ public class PuppeteerConverter : IPuppeteerConverter
             var launchTask = InitializeBrowserAsync();
             launchTask.Wait(); // Espera até que o browser seja inicializado
         }
-
     }
     private async Task InitializeBrowserAsync()
     {
-        await new BrowserFetcher().DownloadAsync();
+        //await new BrowserFetcher().DownloadAsync();
         _browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
     }
 
@@ -42,8 +41,8 @@ public class PuppeteerConverter : IPuppeteerConverter
             var sw = new Stopwatch();
             sw.Start();
             byte[] bytes;
-            bytes = await ConvertToPdf(htmlContent);
-            //bytes = await ExecutarChannelAsync(htmlContent, cancellationToken); // Teste de execução em paralelo
+            //bytes = await ConvertToPdf(htmlContent);
+            bytes = await ExecutarChannelAsync(htmlContent, cancellationToken); // Teste de execução em paralelo
             sw.Stop();
             Console.WriteLine($"Tempo total: {sw.ElapsedMilliseconds}ms");
             return bytes;
@@ -60,17 +59,14 @@ public class PuppeteerConverter : IPuppeteerConverter
         await using var page = await _browser.NewPageAsync();
         await page.SetContentAsync(htmlContent);
 
-        var pdfStream = await page.PdfStreamAsync();
+        var bytes = await page.PdfDataAsync(new PdfOptions { PrintBackground = true });
 
-        using var memoryStream = new MemoryStream();
-        await pdfStream.CopyToAsync(memoryStream);
-        byte[] byteArray = memoryStream.ToArray();
-        return byteArray;
+        return bytes;
     }
 
     private async Task<byte[]> ExecutarChannelAsync(string htmlContent, CancellationToken cancellationToken)
     {
-        const int maxConcurrentRequests = 1000;
+        const int maxConcurrentRequests = 100;
         const int totalRequests = 1000;
         var results = new List<byte[]>();
 

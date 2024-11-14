@@ -24,7 +24,7 @@ public class DinkToPdfConverter(IConverter converter) : IIDinkToPdfConverter
             {
                 ColorMode = ColorMode.Color,
                 PaperSize = PaperKind.A4,
-                Orientation = Orientation.Portrait
+                Orientation = Orientation.Portrait,
             },
             Objects =
             {
