@@ -7,10 +7,7 @@ using BenchmarkDotNet.Validators;
 using DinkToPdf;
 using PocAPI.DinkToPdf;
 using PocAPI.GotenbergLib;
-using PocAPI.IronPdf;
-using PocAPI.NRecoLib;
-using PocAPI.PugPdfLib;
-using PocAPI.PuppeteerLib;
+using PocAPI.Html2Pdf;
 
 namespace BenchmarkTest;
 
@@ -20,10 +17,12 @@ public class PdfBenchmarks
     private readonly HttpClient _httpClient;
     private readonly DinkToPdfUseCase _dinkToPdf;
     private readonly GotenbergUseCase _gotenberg;
-    private readonly IronPdfUseCase _ironPdf;
-    private readonly NRecoUseCase _nReco;
-    private readonly PugPdfUseCase _pugPdf;
-    private readonly PuppeteerUseCase _puppeteer;
+    //private readonly IronPdfUseCase _ironPdf;
+    //private readonly NRecoUseCase _nReco;
+    //private readonly PugPdfUseCase _pugPdf;
+    //private readonly PuppeteerUseCase _puppeteer;
+    private readonly Html2PdfUseCase _html2Pdf;
+    private readonly CancellationToken cancellationToken = new CancellationToken();
 
     public PdfBenchmarks()
     {
@@ -31,29 +30,33 @@ public class PdfBenchmarks
         _httpClient = new HttpClient() { BaseAddress = new Uri("http://localhost:3000") };
         _dinkToPdf = new DinkToPdfUseCase(new DinkToPdfConverter(new SynchronizedConverter(new PdfTools())));
         _gotenberg = new GotenbergUseCase(new GoternbergConverter(_httpClient));
-        _ironPdf = new IronPdfUseCase(new IronPdfConverter());
-        _nReco = new NRecoUseCase(new NRecoConverter());
-        _pugPdf = new PugPdfUseCase(new PugPdfConverter());
-        _puppeteer = new PuppeteerUseCase(new PuppeteerConverter());
+        //_ironPdf = new IronPdfUseCase(new IronPdfConverter());
+        //_nReco = new NRecoUseCase(new NRecoConverter());
+        //_pugPdf = new PugPdfUseCase(new PugPdfConverter());
+        //_puppeteer = new PuppeteerUseCase(new PuppeteerConverter());
+        _html2Pdf = new Html2PdfUseCase(new Html2PdfConverter());
     }
 
     [Benchmark]
-    public async Task BenchmarkDinkToPdf() => await _dinkToPdf.ExecuteAsync(_htmlContent);
+    public async Task BenchmarkDinkToPdf() => await _dinkToPdf.ExecuteAsync(_htmlContent, cancellationToken);
 
     [Benchmark]
-    public async Task BenchmarkGotenberg() => await _gotenberg.ExecuteAsync(_htmlContent);
+    public async Task BenchmarkGotenberg() => await _gotenberg.ExecuteAsync(_htmlContent, cancellationToken);
+
+    //[Benchmark]
+    //public async Task BenchmarkIronPdf() => await _ironPdf.ExecuteAsync(_htmlContent);
+
+    //[Benchmark]
+    //public async Task BenchmarkNReco() => await _nReco.ExecuteAsync(_htmlContent, cancellationToken);
+
+    //[Benchmark]
+    //public async Task BenchmarkPugPdf() => await _pugPdf.ExecuteAsync(_htmlContent, cancellationToken);
+
+    //[Benchmark]
+    //public async Task BenchmarkPuppeteer() => await _puppeteer.ExecuteAsync(_htmlContent, cancellationToken);
 
     [Benchmark]
-    public async Task BenchmarkIronPdf() => await _ironPdf.ExecuteAsync(_htmlContent);
-
-    [Benchmark]
-    public async Task BenchmarkNReco() => await _nReco.ExecuteAsync(_htmlContent);
-
-    [Benchmark]
-    public async Task BenchmarkPugPdf() => await _pugPdf.ExecuteAsync(_htmlContent);
-
-    [Benchmark]
-    public async Task BenchmarkPuppeteer() => await _puppeteer.ExecuteAsync(_htmlContent);
+    public async Task BenchmarkHtml2Pdf() => await _html2Pdf.ExecuteAsync(_htmlContent, cancellationToken);
 
 
     public class Program

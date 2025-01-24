@@ -1,11 +1,11 @@
 using PocAPI.DinkToPdf;
 using PocAPI.Extensions;
 using PocAPI.GotenbergLib;
+using PocAPI.Html2Pdf;
 using PocAPI.IronPdf;
 using PocAPI.iTextSharpLib;
 using PocAPI.NRecoLib;
 using PocAPI.PugPdfLib;
-using PocAPI.PuppeteerLib;
 using PocAPI.SyncfusionLib;
 using System.Runtime.InteropServices;
 
@@ -30,18 +30,30 @@ builder.Services.AddCors(options =>
 builder.Services.AddInvoiceFactory();
 builder.Services.AddDinkToPdf();
 builder.Services.AddPugPdf();
-builder.Services.AddPuppeteer();
+//builder.Services.AddPuppeteer();
 builder.Services.AddGotenberg(builder.Configuration);
 builder.Services.AddIronPdf(builder.Configuration);
 builder.Services.AddNReco();
 builder.Services.AddSyncfusion(builder.Configuration);
 builder.Services.AddITextSharp();
+builder.Services.AddHtml2Pdf();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     Console.WriteLine("IsDevelopment");
+
+    app.Use(async (context, next) =>
+    {
+        if (context.Request.Path.StartsWithSegments("/_framework"))
+        {
+            context.Response.StatusCode = 404;
+            return;
+        }
+        await next();
+    });
+
     app.UseSwagger();
     app.UseSwaggerUI();
 }
@@ -55,12 +67,14 @@ app.UseCors("AllowAll");
 
 app.MapDinkToPdf();
 app.MapPugPdf();
-app.MapPuppeteer();
+//app.MapPuppeteer();
 app.MapGotenberg();
 app.MapIronPdf();
 app.MapNReco();
 app.MapSyncfusion();
 app.MapItextSharp();
+app.MapHtml2Pdf();
+
 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
 {
     Console.WriteLine("WINDOWS");
